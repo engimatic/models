@@ -1,12 +1,13 @@
 import numpy as np
-
-import sklearn.preprocessing as prep
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 
+import sklearn.preprocessing as prep
+
 from autoencoder.autoencoder_models.Autoencoder import Autoencoder
 
-mnist = input_data.read_data_sets('MNIST_data', one_hot = True)
+mnist = input_data.read_data_sets('MNIST_data', one_hot=True)
+
 
 def standard_scale(X_train, X_test):
     preprocessor = prep.StandardScaler().fit(X_train)
@@ -14,9 +15,11 @@ def standard_scale(X_train, X_test):
     X_test = preprocessor.transform(X_test)
     return X_train, X_test
 
+
 def get_random_block_from_data(data, batch_size):
     start_index = np.random.randint(0, len(data) - batch_size)
     return data[start_index:(start_index + batch_size)]
+
 
 X_train, X_test = standard_scale(mnist.train.images, mnist.test.images)
 
@@ -25,10 +28,10 @@ training_epochs = 20
 batch_size = 128
 display_step = 1
 
-autoencoder = Autoencoder(n_input = 784,
-                          n_hidden = 200,
-                          transfer_function = tf.nn.softplus,
-                          optimizer = tf.train.AdamOptimizer(learning_rate = 0.001))
+autoencoder = Autoencoder(n_input=784,
+                          n_hidden=200,
+                          transfer_function=tf.nn.softplus,
+                          optimizer=tf.train.AdamOptimizer(learning_rate=0.001))
 
 for epoch in range(training_epochs):
     avg_cost = 0.

@@ -34,57 +34,60 @@ the scored human judgement.
 
 """
 
-import scipy.stats
 import sys
 from getopt import GetoptError, getopt
+
+import scipy.stats
 
 from vecs import Vecs
 
 try:
-  opts, args = getopt(sys.argv[1:], '', ['embeddings=', 'vocab='])
+    opts, args = getopt(sys.argv[1:], '', ['embeddings=', 'vocab='])
 except GetoptError, e:
-  print >> sys.stderr, e
-  sys.exit(2)
+    print >> sys.stderr, e
+    sys.exit(2)
 
 opt_embeddings = None
 opt_vocab = None
 
 for o, a in opts:
-  if o == '--embeddings':
-    opt_embeddings = a
-  if o == '--vocab':
-    opt_vocab = a
+    if o == '--embeddings':
+        opt_embeddings = a
+    if o == '--vocab':
+        opt_vocab = a
 
 if not opt_vocab:
-  print >> sys.stderr, 'please specify a vocabulary file with "--vocab"'
-  sys.exit(2)
+    print >> sys.stderr, 'please specify a vocabulary file with "--vocab"'
+    sys.exit(2)
 
 if not opt_embeddings:
-  print >> sys.stderr, 'please specify the embeddings with "--embeddings"'
-  sys.exit(2)
+    print >> sys.stderr, 'please specify the embeddings with "--embeddings"'
+    sys.exit(2)
 
 try:
-  vecs = Vecs(opt_vocab, opt_embeddings)
+    vecs = Vecs(opt_vocab, opt_embeddings)
 except IOError, e:
-  print >> sys.stderr, e
-  sys.exit(1)
+    print >> sys.stderr, e
+    sys.exit(1)
+
 
 def evaluate(lines):
-  acts, preds = [], []
+    acts, preds = [], []
 
-  with open(filename, 'r') as lines:
-    for line in lines:
-      w1, w2, act = line.strip().split('\t')
-      pred = vecs.similarity(w1, w2)
-      if pred is None:
-        continue
+    with open(filename, 'r') as lines:
+        for line in lines:
+            w1, w2, act = line.strip().split('\t')
+            pred = vecs.similarity(w1, w2)
+            if pred is None:
+                continue
 
-      acts.append(float(act))
-      preds.append(pred)
+            acts.append(float(act))
+            preds.append(pred)
 
-  rho, _ = scipy.stats.spearmanr(acts, preds)
-  return rho
+    rho, _ = scipy.stats.spearmanr(acts, preds)
+    return rho
+
 
 for filename in args:
-  with open(filename, 'r') as lines:
-    print '%0.3f %s' % (evaluate(lines), filename)
+    with open(filename, 'r') as lines:
+        print '%0.3f %s' % (evaluate(lines), filename)
